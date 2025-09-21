@@ -1,0 +1,10 @@
+target/
+.classpath
+.project
+.settings/
+*.class
+*.jar
+*.war
+*.log
+hs_err_pid*.log
+.DS_Store

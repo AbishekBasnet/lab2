@@ -1,0 +1,42 @@
+main { max-width: 800px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+button { margin: 0.5rem; border: none; border-radius: 6px; padding: 0.5rem 1.2rem; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
+input, textarea {
+	width: 100%;
+	margin: 0.5rem 0;
+	padding: 0.5rem;
+	border-radius: 8px;
+	border: 1px solid #b3d1f7;
+	background: #eaf3fb;
+	font-size: 1rem;
+}
+
+.section-header {
+	color: #174ea6;
+	font-size: 2rem;
+	font-weight: bold;
+	margin-bottom: 1rem;
+}
+
+.btn-logout, .btn-cancel {
+	background: #ffd6d6;
+	color: #a33;
+}
+.btn-logout:hover, .btn-cancel:hover {
+	background: #ffb3b3;
+}
+
+.btn-add {
+	background: #4285f4;
+	color: #fff;
+}
+.btn-add:hover {
+	background: #174ea6;
+}
+
+.btn-submit {
+	background: #34a853;
+	color: #fff;
+}
+.btn-submit:hover {
+	background: #257a3e;
+}

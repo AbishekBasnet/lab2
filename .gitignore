@@ -1,0 +1,49 @@
+# Node dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Java/Maven
+java-service/target/
+java-service/.classpath
+java-service/.project
+java-service/.settings/
+*.class
+*.jar
+*.war
+*.log
+hs_err_pid*.log
+
+# dotenv environment files
+.env
+.env.*
+.env.local
+.env.development
+.env.test
+.env.production
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build output
+client/build/
+server/build/
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+
+# Java build
+java-service/target/
+*.class
+
+# Misc
+coverage/
+dist/
+
+.fake
