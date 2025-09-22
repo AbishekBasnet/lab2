@@ -1,5 +1,7 @@
 Issues Encountered
-1. Responding to a thread is not functioning.
+1. One thread is not being deleted
+2.  Responding to a thread is not functioning.
+3.  inital message is not showing in thread
 
 
 Actions Taken
