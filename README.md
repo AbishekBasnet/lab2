@@ -9,3 +9,11 @@ Actions Taken
 The primary modifications were made within SubjectList.js on the frontend.
 A completely new model was created for Subject.js on the backend.
 # lab2b
+
+
+# Bruno
+Modifications made:
+1. switched to use MongoDB Atlas, my computer don't run MongoDB.
+2. Deleted the author name's field from the threads, and added the request to get this info from the database.
+3. Set the comments feature, switched the user name from "getting from the user" to get from the Database.
+4. Added Like/Dislike feature(subjects and comments)

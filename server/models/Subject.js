@@ -24,7 +24,19 @@ const subjectSchema = new mongoose.Schema({
   timestamp: {
     type: Date,
     default: Date.now
-  }
+  },
+  likeCount: { 
+  type: Number, 
+  default: 0 
+},
+userLikes: [{ 
+  type: mongoose.Schema.Types.ObjectId, 
+  ref: 'User' 
+}],
+userDislikes: [{ 
+  type: mongoose.Schema.Types.ObjectId, 
+  ref: 'User' 
+}]
 });
 
 module.exports = mongoose.model('Subject', subjectSchema);

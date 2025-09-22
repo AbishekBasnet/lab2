@@ -53,7 +53,7 @@ router.post('/', authenticateToken, async (req, res) => {
     return res.status(400).json({ error: 'Text and subjectId are required.' });
   }
   if (text.length > 1000) {
-    return res.status(400).json({ error: 'Comment text exceeds 1000 characters.' });
+    return res.status(400).json({ error: 'Comment text exceeds 1000 characters.' }); 
   }
   try {
     // Ensure subject exists

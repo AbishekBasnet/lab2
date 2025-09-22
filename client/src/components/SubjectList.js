@@ -11,18 +11,15 @@ import axios from 'axios';
 const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null, setToken }) => {
   // All threads stored as { id, title, author, createdAt, messages: [{id, author, text, createdAt}] }
   const [threads, setThreads] = useState([]);
-  const [selectedThreadId, setSelectedThreadId] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Form state for creating thread
   const [newTitle, setNewTitle] = useState('');
-  const [newAuthor, setNewAuthor] = useState('');
   const [newMessage, setNewMessage] = useState('');
 
   // Response form state
-  const [replyAuthor, setReplyAuthor] = useState('');
-  const [replyText, setReplyText] = useState('');
-
+  const [replyTexts, setReplyTexts] = useState({}); // Object to store reply text for each thread
+  const [selectedThreadId, setSelectedThreadId] = useState(null);
   // Load/save to localStorage so data persists across reloads
   // Load threads from backend
   useEffect(() => {
@@ -31,7 +28,7 @@ const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null
       try {
         const res = await axios.get('/api/subjects', { headers: { Authorization: `Bearer ${token}` } });
         setThreads(res.data);
-        if (res.data.length) setSelectedThreadId(res.data[0]._id);
+        
       } catch (err) {
         if (err.response?.status === 403) {
           alert('Session expired. Please log in again.');
@@ -55,7 +52,7 @@ const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null
   // Create a new thread (subject)
   const createThread = async (e) => {
     e.preventDefault();
-    if (!newTitle.trim() || !newAuthor.trim() || !newMessage.trim()) return;
+    if (!newTitle.trim() || !newMessage.trim()) return;
     if (!token) {
       alert('Please log in first.');
       return;
@@ -64,13 +61,11 @@ const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null
     try {
       const res = await axios.post('/api/subjects', {
         title: newTitle.trim(),
-        creatorName: newAuthor.trim(),
         initialMessage: newMessage.trim()
       }, { headers: { Authorization: `Bearer ${token}` } });
       setThreads(prev => [res.data, ...prev]);
-      setSelectedThreadId(res.data._id);
+      
       setNewTitle('');
-      setNewAuthor('');
       setNewMessage('');
     } catch (err) {
       if (err.response?.status === 403) {
@@ -87,11 +82,39 @@ const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null
   };
 
   // Add a response to a thread (not implemented, would require backend API for comments)
-  const addResponse = (e) => {
+  const addResponse = async (e, threadId) => {
     e.preventDefault();
-    alert('Replying to threads is not implemented in backend yet.');
-    setReplyAuthor('');
-    setReplyText('');
+    const currentReplyText = replyTexts[threadId] || '';
+    if (!currentReplyText.trim()) {
+      alert('Reply text is required.');
+      return;
+    }
+    
+    if (!token) {
+      alert('Please log in first.');
+      return;
+    }
+    
+    try {
+      const res = await axios.post('/api/comments', {
+        text: currentReplyText.trim(),
+        subjectId: threadId
+      }, { headers: { Authorization: `Bearer ${token}` } });
+      
+      // Refresh the threads to show the new comment
+      const updatedRes = await axios.get('/api/subjects', { 
+        headers: { Authorization: `Bearer ${token}` } 
+      });
+      setThreads(updatedRes.data);
+      
+      // Clear only this thread's reply text
+      setReplyTexts(prev => ({
+        ...prev,
+        [threadId]: ''
+      }));
+    } catch (err) {
+      alert('Failed to add comment: ' + (err.response?.data?.error || err.message));
+    }
   };
 
   // Delete a response by id (not implemented)
@@ -115,8 +138,8 @@ const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null
       console.log('Delete successful');
       setThreads(prev => prev.filter(t => t._id !== threadId));
       const remaining = threads.filter(t => t._id !== threadId);
-      if (remaining.length) setSelectedThreadId(remaining[0]._id);
-      else setSelectedThreadId(null);
+      
+
     } catch (err) {
       console.log('Delete error:', err.response);
       if (err.response?.status === 403) {
@@ -132,12 +155,33 @@ const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null
     setLoading(false);
   };
 
-  // Select a thread to view messages
-  const selectThread = (id) => {
-    setSelectedThreadId(id);
+
+  const handleVote = async (targetType, targetId, voteType) => {
+    if (!token) {
+      alert('Please log in first.');
+      return;
+    }
+
+    try {
+      await axios.post('/api/likes', {
+        targetType,
+        targetId,
+        voteType
+      }, { headers: { Authorization: `Bearer ${token}` } });
+
+      // Refresh threads to show updated counts
+      const updatedRes = await axios.get('/api/subjects', { 
+        headers: { Authorization: `Bearer ${token}` } 
+      });
+      setThreads(updatedRes.data);
+    } catch (err) {
+      alert('Failed to vote: ' + (err.response?.data?.error || err.message));
+    }
   };
 
-  const selectedThread = threads.find(t => t._id === selectedThreadId) || null;
+  
+
+  
 
   if (loading) {
     return <div className="container text-center mt-5"><div className="spinner-border text-primary" role="status"><span className="visually-hidden">Loading...</span></div></div>;
@@ -162,17 +206,14 @@ const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null
       <div className="container-fluid d-flex justify-content-center align-items-center min-vh-100 bg-light">
         <div className="w-100" style={{ maxWidth: 1100, padding: '1rem' }}>
           <div className="row justify-content-center">
-            {/* Left column: create thread + thread list */}
-            <div className="col-12 col-md-5 col-lg-4 mb-4">
+            {/* Create thread form - full width */}
+            <div className="col-12 mb-4">
               <div className="card shadow-sm">
                 <div className="card-body">
                   <h5 className="card-title">Create Thread</h5>
                   <form onSubmit={createThread}>
                     <div className="mb-2">
                       <input className="form-control" placeholder="Thread title" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
-                    </div>
-                    <div className="mb-2">
-                      <input className="form-control" placeholder="Your name" value={newAuthor} onChange={(e) => setNewAuthor(e.target.value)} />
                     </div>
                     <div className="mb-2">
                       <textarea className="form-control" rows={3} placeholder="Initial message" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
@@ -183,77 +224,105 @@ const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null
                   </form>
                 </div>
               </div>
-
-              <div className="mt-3">
-                <h6 className="mb-2">Threads</h6>
-                <div className="list-group">
-                  {threads.length === 0 && <div className="text-muted small">No threads yet.</div>}
-                  {threads.map(t => (
-                    <button
-                      key={t._id}
-                      className={`list-group-item list-group-item-action d-flex justify-content-between align-items-start ${t._id === selectedThreadId ? 'active' : ''}`}
-                      onClick={() => selectThread(t._id)}
-                    >
-                      <div>
-                        <div className="fw-bold">{t.title}</div>
-                        <div className="small">{t.creatorName} • {new Date(t.timestamp).toLocaleString()}</div>
-                      </div>
-                      <div className="badge bg-secondary rounded-pill">{t.commentCount || 0}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
 
-            {/* Right column: selected thread messages and reply box */}
-            <div className="col-12 col-md-7 col-lg-8">
-              <div className="card shadow-sm">
-                <div className="card-body">
-                  {!selectedThread && (
-                    <div className="text-center text-muted">
-                      Select a thread or create a new one to start the conversation.
+            {/* All threads with comments - full width */}
+            <div className="col-12">
+              {threads.length === 0 && <div className="text-muted text-center">No threads yet.</div>}
+              {threads.map(thread => (
+                <div key={thread._id} className="card shadow-sm mb-4">
+                  <div className="card-body">
+                    {/* Thread header */}
+                    <div className="d-flex justify-content-between align-items-start mb-3">
+                      <div>
+                        <h5 className="mb-1">{thread.title}</h5>
+                        <small className="text-muted">{thread.creatorName} • {new Date(thread.timestamp).toLocaleString()}</small>
+                      </div>
+                      <div className="d-flex align-items-center mt-2">
+                        <button 
+                          className={`btn btn-sm me-2 ${thread.userVote === 'like' ? 'btn-success' : 'btn-outline-success'}`}
+                          onClick={() => handleVote('Subject', thread._id, 'like')}
+                        >
+                          👍 {thread.likeCount >= 0 ? thread.likeCount : 0}
+                        </button>
+                        <button 
+                          className={`btn btn-sm me-2 ${thread.userVote === 'dislike' ? 'btn-danger' : 'btn-outline-danger'}`}
+                          onClick={() => handleVote('Subject', thread._id, 'dislike')}
+                        >
+                          👎
+                        </button>
+                        <span className="text-muted">Score: {thread.likeCount || 0}</span>
+                      </div>
+                      <div>
+                        <span className="badge bg-secondary me-2">{thread.commentCount || 0} replies</span>
+                        <button className="btn btn-outline-danger btn-sm" onClick={() => deleteThread(thread._id)}>
+                          Delete
+                        </button>
+                      </div>
                     </div>
-                  )}
 
-                  {selectedThread && (
-                    <>
-                      <div className="d-flex justify-content-between align-items-start mb-3">
+                    {/* Thread initial message */}
+                    <div className="mb-3 p-3 bg-light rounded">
+                      <p className="mb-0">{thread.initialMessage}</p>
+                    </div>
+
+                    {/* Comments section */}
+                    <div className="mb-3">
+                      <h6>Recent Comments:</h6>
+                      {thread.comments && thread.comments.length > 0 ? (
                         <div>
-                          <h5 className="mb-0">{selectedThread.title}</h5>
-                          <small className="text-muted">{selectedThread.creatorName} • {new Date(selectedThread.timestamp).toLocaleString()}</small>
-                        </div>
-                        <div>
-                          <button
-                            className="btn btn-outline-danger btn-sm"
-                            onClick={() => deleteThread(selectedThread._id)}
-                          >
-                            Delete Thread
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="mb-3" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                        {/* Comments/messages would be shown here if implemented */}
-                        <div className="text-muted">Replies not implemented yet.</div>
-                      </div>
-
-                      <form onSubmit={addResponse}>
-                        <div className="row g-2">
-                          <div className="col-12 col-sm-4">
-                            <input className="form-control" placeholder="Your name" value={replyAuthor} onChange={(e) => setReplyAuthor(e.target.value)} />
-                          </div>
-                          <div className="col-12 col-sm-8">
-                            <div className="input-group">
-                              <input className="form-control" placeholder="Write a reply..." value={replyText} onChange={(e) => setReplyText(e.target.value)} />
-                              <button className="btn btn-primary" type="submit">Reply</button>
+                          {thread.comments.map(comment => (
+                            <div key={comment._id} className="border-start border-3 ps-3 mb-2">
+                              <div className="d-flex justify-content-between align-items-start">
+                                <div className="flex-grow-1">
+                                  <small className="text-muted">{comment.userId?.name || 'Anonymous'} • {new Date(comment.timestamp).toLocaleString()}</small>
+                                  <p className="mb-1 mt-1">{comment.text}</p>
+                                </div>
+                                <div className="d-flex align-items-center">
+                                  <button 
+                                    className={`btn btn-sm btn-outline-success me-1`}
+                                    onClick={() => handleVote('Comment', comment._id, 'like')}
+                                  >
+                                    👍 {comment.likeCount || 0}
+                                  </button>
+                                  <button 
+                                    className={`btn btn-sm btn-outline-danger`}
+                                    onClick={() => handleVote('Comment', comment._id, 'dislike')}
+                                  >
+                                    👎
+                                  </button>
+                                </div>
+                              </div>
                             </div>
-                          </div>
+                            
+                          ))}
+                          {thread.commentCount > 3 && (
+                            <small className="text-muted">... and {thread.commentCount - 3} more replies</small>
+                          )}
                         </div>
-                      </form>
-                    </>
-                  )}
+                      ) : (
+                        <p className="text-muted mb-0">No comments yet. Be the first to reply!</p>
+                      )}
+                    </div>
+
+                    {/* Reply form for this thread */}
+                    <form onSubmit={(e) => addResponse(e, thread._id)}>
+                      <div className="input-group">
+                        <input 
+                          className="form-control" 
+                          placeholder="Write a reply..." 
+                          value={replyTexts[thread._id] || ''} 
+                          onChange={(e) => setReplyTexts(prev => ({
+                            ...prev,
+                            [thread._id]: e.target.value
+                          }))} 
+                        />
+                        <button className="btn btn-primary" type="submit">Reply</button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
