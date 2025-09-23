@@ -73,4 +73,35 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
+// Delete a comment
+router.delete('/:id', authenticateToken, async (req, res) => {
+  try {
+    console.log('Delete comment request for ID:', req.params.id);
+    console.log('User ID from token:', req.user.userId);
+    
+    const comment = await Comment.findById(req.params.id);
+    console.log('Found comment:', comment);
+    
+    if (!comment) {
+      console.log('Comment not found in database');
+      return res.status(404).json({ error: 'Comment not found.' });
+    }
+    
+    // Check if user owns the comment
+    console.log('Comment userId:', comment.userId.toString());
+    console.log('Request userId:', req.user.userId);
+    
+    if (comment.userId.toString() !== req.user.userId) {
+      return res.status(403).json({ error: 'You can only delete your own comments.' });
+    }
+    
+    await Comment.findByIdAndDelete(req.params.id);
+    console.log('Comment deleted successfully');
+    res.json({ message: 'Comment deleted successfully.' });
+  } catch (err) {
+    console.log('Delete comment error:', err);
+    res.status(500).json({ error: 'Failed to delete comment.' });
+  }
+});
+
 module.exports = router;

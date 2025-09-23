@@ -22,26 +22,27 @@ const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null
   const [selectedThreadId, setSelectedThreadId] = useState(null);
   // Load/save to localStorage so data persists across reloads
   // Load threads from backend
-  useEffect(() => {
-    const fetchSubjects = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get('/api/subjects', { headers: { Authorization: `Bearer ${token}` } });
-        setThreads(res.data);
-        
-      } catch (err) {
-        if (err.response?.status === 403) {
-          alert('Session expired. Please log in again.');
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          if (setToken) setToken(null);
-          window.location.reload();
-        } else {
-          setThreads([]);
-        }
+  const fetchSubjects = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get('/api/subjects', { headers: { Authorization: `Bearer ${token}` } });
+      setThreads(res.data);
+      
+    } catch (err) {
+      if (err.response?.status === 403) {
+        alert('Session expired. Please log in again.');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        if (setToken) setToken(null);
+        window.location.reload();
+      } else {
+        setThreads([]);
       }
-      setLoading(false);
-    };
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
     if (token) fetchSubjects();
     else {
       setThreads(initialSubjects || []);
@@ -117,9 +118,30 @@ const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null
     }
   };
 
-  // Delete a response by id (not implemented)
-  const deleteResponse = (threadId, messageId) => {
-    alert('Deleting responses is not implemented in backend yet.');
+  // Delete a response by id
+  const deleteResponse = async (threadId, commentId) => {
+    console.log('Deleting comment:', commentId, 'from thread:', threadId);
+    if (!window.confirm('Are you sure you want to delete this comment?')) return;
+    if (!token) {
+      alert('Please log in first.');
+      return;
+    }
+    try {
+      console.log('Sending DELETE request to:', `/api/comments/${commentId}`);
+      await axios.delete(`/api/comments/${commentId}`, { 
+        headers: { Authorization: `Bearer ${token}` } 
+      });
+      console.log('Delete successful, refreshing threads...');
+      // Refresh threads to remove the deleted comment
+      await fetchSubjects();
+    } catch (err) {
+      console.log('Delete error:', err.response);
+      if (err.response?.status === 403) {
+        alert('You can only delete your own comments.');
+      } else {
+        alert('Failed to delete comment: ' + (err.response?.data?.error || err.message));
+      }
+    }
   };
 
   // Delete a thread using backend API
@@ -243,15 +265,14 @@ const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null
                           className={`btn btn-sm me-2 ${thread.userVote === 'like' ? 'btn-success' : 'btn-outline-success'}`}
                           onClick={() => handleVote('Subject', thread._id, 'like')}
                         >
-                          👍 {thread.likeCount >= 0 ? thread.likeCount : 0}
+                          👍 {thread.likes || 0}
                         </button>
                         <button 
                           className={`btn btn-sm me-2 ${thread.userVote === 'dislike' ? 'btn-danger' : 'btn-outline-danger'}`}
                           onClick={() => handleVote('Subject', thread._id, 'dislike')}
                         >
-                          👎
+                          👎 {thread.dislikes || 0}
                         </button>
-                        <span className="text-muted">Score: {thread.likeCount || 0}</span>
                       </div>
                       <div>
                         <span className="badge bg-secondary me-2">{thread.commentCount || 0} replies</span>
@@ -283,13 +304,20 @@ const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null
                                     className={`btn btn-sm btn-outline-success me-1`}
                                     onClick={() => handleVote('Comment', comment._id, 'like')}
                                   >
-                                    👍 {comment.likeCount || 0}
+                                    👍 {comment.likes || 0}
                                   </button>
                                   <button 
-                                    className={`btn btn-sm btn-outline-danger`}
+                                    className={`btn btn-sm btn-outline-danger me-1`}
                                     onClick={() => handleVote('Comment', comment._id, 'dislike')}
                                   >
-                                    👎
+                                    👎 {comment.dislikes || 0}
+                                  </button>
+                                  <button 
+                                    className="btn btn-sm btn-outline-secondary"
+                                    onClick={() => deleteResponse(thread._id, comment._id)}
+                                    title="Delete comment"
+                                  >
+                                    🗑️
                                   </button>
                                 </div>
                               </div>

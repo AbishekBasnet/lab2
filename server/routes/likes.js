@@ -74,7 +74,11 @@ async function updateTargetCounts(targetType, targetId) {
   const dislikes = await Like.countDocuments({ targetId, voteType: 'dislike' });
   const likeCount = likes - dislikes;
   
-  await Model.findByIdAndUpdate(targetId, { likeCount });
+  await Model.findByIdAndUpdate(targetId, { 
+    likeCount,
+    likes: likes,
+    dislikes: dislikes
+  });
 }
 
 module.exports = router;
