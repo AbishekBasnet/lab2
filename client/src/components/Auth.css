@@ -1,0 +1,78 @@
+.auth-container {
+  min-height: 100vh;
+  background: linear-gradient(to right, #c1daec, #5888e1, #3e6cea);
+  padding: 40px;
+}
+
+.auth-container {
+  min-height: 100vh;
+  background: linear-gradient(-45deg, #6a11cb, #2575fc, #43e97b, #38f9d7);
+  background-size: 400% 400%;
+  animation: gradientShift 12s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+.auth-card {
+  background: #fff;
+  padding: 30px;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 400px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+h2 {
+  font-weight: 700;
+  color: #714cce;
+}
+
+.btn-gradient {
+  background: linear-gradient(to right, #667eea, #764ba2);
+  color: #fff;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.btn-gradient:hover {
+  background: linear-gradient(to right, #ecedf7, #6b46c1);
+}
+
+.switch-mode {
+  color: #6c63ff;
+  font-weight: 500;
+  text-decoration: underline;
+  background: none;
+  border: none;
+}
+
+.switch-mode:hover {
+  color: #4b42b5;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.form-control:focus {
+  border-color: #cb11bf;
+  box-shadow: 0 0 8px rgba(175, 115, 239, 0.5);
+}
+
+
