@@ -70,4 +70,9 @@ for client folder:
 Finally, taken to our 'Discussion-Board'
 --- Registeration>> Logging in>> Thread List Page
 And finally 'Logout' to exit this screen.
+Laxmi:
+1.Made changes in users.js for optimizations.
+2.Made some changes in custom.css.
+
+
 
