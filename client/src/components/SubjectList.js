@@ -187,7 +187,7 @@ const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null
       alert('Please log in first.');
       return;
     }
-
+  console.log('handleVote payload:', 'targetType:', targetType, 'targetId:', targetId, 'voteType:', voteType);
     try {
       await axios.post('/api/likes', {
         targetType,
@@ -339,7 +339,7 @@ const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null
 
                     {/* Reply form for this thread */}
                     <form onSubmit={(e) => addResponse(e, thread._id)}>
-                      <div className="input-group">
+                      <div className="input-group mb-2">
                         <input 
                           className="form-control" 
                           placeholder="Write a reply..." 
@@ -352,6 +352,7 @@ const SubjectList = ({ subjects: initialSubjects = [], token = null, user = null
                         <button className="btn btn-primary" type="submit">Reply</button>
                       </div>
                     </form>
+                    {/* ...removed emoji reaction button set... */}
                   </div>
                 </div>
               ))}
