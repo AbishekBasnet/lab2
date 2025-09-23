@@ -1,51 +1,56 @@
+/*This is Auth Page Container. */
 .auth-container {
-  min-height: 100vh;
-  background: linear-gradient(to right, #c1daec, #5888e1, #3e6cea);
-  padding: 40px;
-}
-
-.auth-container {
-  min-height: 100vh;
+  min-height: 100vh; /* Full viewport height */
+  
+  /* Animated gradient background */
   background: linear-gradient(-45deg, #6a11cb, #2575fc, #43e97b, #38f9d7);
-  background-size: 400% 400%;
-  animation: gradientShift 12s ease infinite;
+  background-size: 400% 400%; /* Allows smooth shifting effect */
+  animation: gradientShift 12s ease infinite; /* Background animation */
+
+  /* Center card in the middle of the screen */
   display: flex;
   justify-content: center;
   align-items: center;
+
+  padding: 40px;
 }
 
+/* Gradient shifting animation for background */
 @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-
+/* Auth Card (Login/Register Box) */
 .auth-card {
-  background: #fff;
-  padding: 30px;
-  border-radius: 15px;
+  background: #fff; /* White card background */
+  padding: 30px; /* Inner spacing */
+  border-radius: 15px; /* Rounded corners */
   width: 100%;
-  max-width: 400px;
-  animation: fadeIn 0.5s ease-in-out;
+  max-width: 400px; /* Limit size for better UI */
+  animation: fadeIn 0.5s ease-in-out; /* Smooth entry effect */
 }
 
+/* Heading style */
 h2 {
   font-weight: 700;
-  color: #714cce;
+  color: #714cce; /* Nice purple tone */
 }
 
+/* Buttons*/
 .btn-gradient {
-  background: linear-gradient(to right, #667eea, #764ba2);
+  background: linear-gradient(to right, #667eea, #764ba2); /* Gradient button */
   color: #fff;
   border: none;
   transition: background 0.3s ease;
 }
 
 .btn-gradient:hover {
-  background: linear-gradient(to right, #ecedf7, #6b46c1);
+  background: linear-gradient(to right, #ecedf7, #6b46c1); /* Hover effect */
 }
 
+/* Switch between Login/Register link button */
 .switch-mode {
   color: #6c63ff;
   font-weight: 500;
@@ -59,20 +64,20 @@ h2 {
   cursor: pointer;
 }
 
+/*Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: scale(0.97);
+    transform: scale(0.97); /* Slightly smaller at start */
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1); /* Normal size */
   }
 }
 
+/* Form Input Focus*/
 .form-control:focus {
-  border-color: #cb11bf;
-  box-shadow: 0 0 8px rgba(175, 115, 239, 0.5);
+  border-color: #cb11bf; /* Purple border highlight */
+  box-shadow: 0 0 8px rgba(175, 115, 239, 0.5); /* Glow effect */
 }
-
-

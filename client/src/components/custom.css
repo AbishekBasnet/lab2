@@ -1,0 +1,59 @@
+/* Global background */
+body {
+  background: linear-gradient(135deg, #e3f2fd, #ffffff);
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+}
+
+/* Card styling */
+.card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border: none;
+}
+
+/* Thread title */
+.card-title, h5 {
+  font-weight: 600;
+  color: #174ea6; /* nice deep blue */
+}
+
+/* Buttons */
+.btn-primary {
+  background: #174ea6;
+  border: none;
+  border-radius: 8px;
+}
+
+.btn-primary:hover {
+  background: #0d3b91;
+}
+
+.btn-outline-primary {
+  border-radius: 8px;
+  border-color: #174ea6;
+  color: #174ea6;
+}
+
+.btn-outline-primary:hover {
+  background: #174ea6;
+  color: white;
+}
+
+/* Reply input highlight */
+input.form-control, textarea.form-control {
+  border-radius: 10px;
+  border: 1px solid #b3d1f7;
+  background-color: #f9fcff;
+}
+
+/* Thread message box */
+.bg-light {
+  background-color: #f4f8ff !important;
+  border-radius: 10px;
+}
+
+/* Spinner text */
+.text-muted {
+  color: #6c757d !important;
+}

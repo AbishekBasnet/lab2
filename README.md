@@ -26,3 +26,24 @@ Modifications by Biraj:
 2. Updated like/dislike to show counts inside it.
 3. Removed the existing score display for better visual.
 4. Added proper authorization checks for comment deletion.
+
+# Ekjot
+Modifications made:
+
+## What I Did
+
+### 1. Login & Registration (Auth.js + Auth.css)
+- Redesigned the login/register page to look **modern and professional**  
+- Added a **new file** `Auth.css` to handle styles separately.  
+- Changed background, fonts, and buttons to give the page a fresh look.
+- Added animation, colored background and font with improved layout for a better user experience. 
+- **Here, I Used:** React (JSX + useState), Bootstrap forms/buttons, Custom CSS (Auth.css), React Icons  
+
+---
+
+### 2. Discussion Board (SubjectList.js + custom.css)
+- Restyled the **thread list and comments** to look cleaner and more attractive.  
+- Added a **new file** `custom.css` to manage styling changes.  
+- Improved card design with **shadows, spacing, and rounded corners**   
+- Styled the reply box and buttons to make the UI more user-friendly     
+- **Here, I Used:** React (JSX + Hooks), Bootstrap (cards, buttons, layout), Custom CSS (custom.css), React Icons  
