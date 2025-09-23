@@ -32,7 +32,7 @@ Modifications made:
 
 ## What I Did
 
-### 1. Login & Registration (Auth.js + Auth.css)
+### 1. Login & Registration (Auth.js + Auth.css) (Front-end)
 - Redesigned the login/register page to look **modern and professional**  
 - Added a **new file** `Auth.css` to handle styles separately.  
 - Changed background, fonts, and buttons to give the page a fresh look.
@@ -46,4 +46,28 @@ Modifications made:
 - Added a **new file** `custom.css` to manage styling changes.  
 - Improved card design with **shadows, spacing, and rounded corners**   
 - Styled the reply box and buttons to make the UI more user-friendly     
-- **Here, I Used:** React (JSX + Hooks), Bootstrap (cards, buttons, layout), Custom CSS (custom.css), React Icons  
+- **Here, I Used:** React (JSX + Hooks), Bootstrap (cards, buttons, layout), Custom CSS (custom.css), React Icons
+
+# How to access Web page:
+1. clone the repository: https://github.com/AbishekBasnet/lab2
+2. After that, type this in terminal:  cd lab2
+3. Then install dependecies for client and server :
+-# Install server dependencies
+cd server
+npm install
+
+-# Install client dependencies
+cd ../client
+npm install
+4. Run the app:
+for server folder
+- cd server
+- node app.js
+
+for client folder:
+-cd client
+-npm start (browser will automatically open the web-page, in this step at : http://localhost:3000) 
+Finally, taken to our 'Discussion-Board'
+--- Registeration>> Logging in>> Thread List Page
+And finally 'Logout' to exit this screen.
+
